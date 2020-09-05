@@ -19,20 +19,19 @@ class AuthorController extends Controller
      */
     public function index(Request $request)
     {
+        $name = $request->input('name');
+        $exact = $request->input('exact');
 
-      if( $request->has('name') ){
+        $authors = Author::when($name, function ($query, $name) use ($exact) {
+            if($exact){
+                return $query->where('name', $name);
+            }else{
+                return $query->where('name', 'like', '%' . $name . '%');
+            }
+        })
+        ->get();
 
-        if( $request->input('exact') ){
-            $authors = Author::where('name', $request->input('name'))->get();
-        }else{
-            $authors = Author::where('name', 'like', '%' . $request->input('name') . '%')->get();
-        }
-      }else{
-
-          $authors = Author::all();
-      }
-
-      return $this->successResponse($authors);
+        return $this->successResponse($authors);
     }
 
     /**
