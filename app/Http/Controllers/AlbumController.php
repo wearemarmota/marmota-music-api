@@ -13,7 +13,7 @@ class AlbumController extends Controller
 {
 
     use ApiResponser;
-    
+
     /**
      * Return albums list
      *
@@ -21,9 +21,20 @@ class AlbumController extends Controller
      */
     public function index(Request $request)
     {
-      $albums = Album::all();
+        $name = $request->input('name');
+        $exact = $request->input('exact');
 
-      return $this->successResponse($albums);
+        $albums = Album::when($name, function ($query, $name) use ($exact) {
+            if($exact){
+                return $query->where('name', $name);
+            }else{
+                return $query->where('name', 'like', '%' . $name . '%');
+            }
+        })
+        ->with('author')
+        ->get();
+
+        return $this->successResponse($albums);
     }
 
     /**
@@ -33,13 +44,23 @@ class AlbumController extends Controller
      */
     public function indexByAuthor(Request $request, $author)
     {
-      Author::findOrFail($author);
+        Author::findOrFail($author);
 
-      // More info about ->with('author'):
-      // https://laravel.com/docs/5.0/eloquent#eager-loading
-      $albums = Album::where('author_id', $author)->with('author')->get();
+        $name = $request->input('name');
+        $exact = $request->input('exact');
 
-      return $this->successResponse($albums);
+        $albums = Album::where('author_id', $author)
+        ->when($name, function ($query, $name) use ($exact) {
+            if($exact){
+                return $query->where('name', $name);
+            }else{
+                return $query->where('name', 'like', '%' . $name . '%');
+            }
+        })
+        ->with('author')
+        ->get();
+
+        return $this->successResponse($albums);
     }
 
 
@@ -61,7 +82,7 @@ class AlbumController extends Controller
       $album = Album::create($request->all());
 
       return $this->successResponse($album, Response::HTTP_CREATED);
-    } 
+    }
 
     /**
      * Return specific album
@@ -73,7 +94,7 @@ class AlbumController extends Controller
       $album = Album::findOrFail($album);
 
       return $this->successResponse($album);
-    } 
+    }
 
     /**
      * Update the information of an existing album
@@ -99,7 +120,7 @@ class AlbumController extends Controller
       $album->save();
 
       return $this->successResponse($album);
-    } 
+    }
 
     /**
      * Removes an existing album
@@ -111,6 +132,6 @@ class AlbumController extends Controller
       $album = Album::findOrFail($album);
       $album->delete();
       return $this->successResponse($album);
-    } 
+    }
 
   }
