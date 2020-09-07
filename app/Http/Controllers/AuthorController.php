@@ -23,11 +23,9 @@ class AuthorController extends Controller
         $exact = $request->input('exact');
 
         $authors = Author::when($name, function ($query, $name) use ($exact) {
-            if($exact){
-                return $query->where('name', $name);
-            }else{
-                return $query->where('name', 'like', '%' . $name . '%');
-            }
+            $condition = $exact ? '=' : 'like';
+            $value = $exact ? $name : '%' . $name . '%';
+            return $query->where('name', $condition, $value);
         })
         ->get();
 
