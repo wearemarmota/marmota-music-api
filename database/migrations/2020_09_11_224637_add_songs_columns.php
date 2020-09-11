@@ -15,11 +15,13 @@ class AddSongsColumns extends Migration
     {
         Schema::table('songs', function (Blueprint $table) {
             $table->string('genre')->nullable();
-            $table->integer('duration')->unsigned()->default(0);
+            $table->float('duration')->unsigned()->default(0);
             $table->integer('position')->unsigned()->default(0);
             $table->integer('position_of')->unsigned()->default(0);
             $table->integer('disk')->unsigned()->default(0);
             $table->integer('disk_of')->unsigned()->default(0);
+            $table->integer('bitrate')->unsigned()->default(0);
+            $table->integer('samplerate')->unsigned()->default(0);
         });
     }
 
@@ -37,6 +39,8 @@ class AddSongsColumns extends Migration
             $table->dropColumn('position_of');
             $table->dropColumn('disk');
             $table->dropColumn('disk_of');
+            $table->dropColumn('bitrate');
+            $table->dropColumn('samplerate');
         });
     }
 }
