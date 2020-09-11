@@ -8,6 +8,7 @@ use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
+use wapmorgan\Mp3Info\Mp3Info;
 
 class SongController extends Controller
 {
@@ -63,11 +64,19 @@ class SongController extends Controller
         $extension = $request->file('song')->getClientOriginalExtension();
         $fileName = "{$uuid}.{$extension}";
 
+        $mp3Data = new Mp3Info($request->file('song'), true);
+
         // ToDo: Check if the uuid already exists in DB.
 
-        $song = Song::create(array_merge($request->all(), [
+        $extraData = [
             'uuid' => $uuid,
-        ]));
+            'duration' => $mp3Data->duration,
+            'position' => $mp3Data->tags['track'] ?: 0,
+            'bitrate' => $mp3Data->bitRate,
+            'samplerate' => $mp3Data->sampleRate,
+        ];
+
+        $song = Song::create(array_merge($request->all(), $extraData));
 
         $request->file('song')->move(self::SONGS_FOLDER, $fileName);
 

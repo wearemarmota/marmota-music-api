@@ -19,6 +19,14 @@ class Song extends Model
         'name',
         'album_id',
         'uuid',
+        'genre',
+        'duration',
+        'position',
+        'position_of',
+        'disk',
+        'disk_of',
+        'bitrate',
+        'samplerate',
     ];
 
     protected $hidden = [
