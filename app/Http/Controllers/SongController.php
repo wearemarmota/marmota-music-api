@@ -24,7 +24,9 @@ class SongController extends Controller
      */
     public function index(Request $request)
     {
-      $songs = Song::with('album', 'album.author')->get();
+      $songs = Song::with('album', 'album.author')
+        ->orderBy('position')
+        ->get();
 
       return $this->successResponse($songs);
     }
@@ -38,7 +40,10 @@ class SongController extends Controller
     {
       Album::findOrFail($album);
 
-      $songs = Song::where('album_id', $album)->with('album', 'album.author')->get();
+      $songs = Song::where('album_id', $album)
+        ->with('album', 'album.author')
+        ->orderBy('position')
+        ->get();
 
       return $this->successResponse($songs);
     }
