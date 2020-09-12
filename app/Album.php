@@ -16,19 +16,19 @@ class Album extends Model
      * @var array
      */
     protected $fillable = [
-        'name',
+        'title',
         'year',
-        'author_id',
+        'artist_id',
     ];
 
     protected $hidden = [
-      'author_id',
+      'artist_id',
     ];
 
     // More info about this feature:
     // https://laravel.com/docs/5.0/eloquent#eager-loading
-    public function Author()
+    public function Artist()
     {
-      return $this->belongsTo('App\Author','author_id');
+      return $this->belongsTo('App\Artist','artist_id');
     }
 }

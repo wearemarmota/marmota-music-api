@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Author;
+use App\Artist;
 use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-class AuthorController extends Controller
+class ArtistController extends Controller
 {
 
     use ApiResponser;
 
     /**
-     * Return authors list
+     * Return artists list
      *
      * @return @Illuminate\Http\Response
      */
@@ -22,18 +22,18 @@ class AuthorController extends Controller
         $name = $request->input('name');
         $exact = $request->input('exact');
 
-        $authors = Author::when($name, function ($query, $name) use ($exact) {
+        $artists = Artist::when($name, function ($query, $name) use ($exact) {
             $condition = $exact ? '=' : 'like';
             $value = $exact ? $name : '%' . $name . '%';
             return $query->where('name', $condition, $value);
         })
         ->get();
 
-        return $this->successResponse($authors);
+        return $this->successResponse($artists);
     }
 
     /**
-     * Create an instance of author
+     * Create an instance of artists
      *
      * @return @Illuminate\Http\Response
      */
@@ -46,29 +46,29 @@ class AuthorController extends Controller
 
       $this->validate($request, $rules);
 
-      $author = Author::create($request->all());
+      $artist = Artist::create($request->all());
 
-      return $this->successResponse($author, Response::HTTP_CREATED);
+      return $this->successResponse($artist, Response::HTTP_CREATED);
     }
 
     /**
-     * Return specific author
+     * Return specific artist
      *
      * @return @Illuminate\Http\Response
      */
-    public function show($author)
+    public function show($artist)
     {
-      $author = Author::findOrFail($author);
+      $artist = Artist::findOrFail($artist);
 
-      return $this->successResponse($author);
+      return $this->successResponse($artist);
     }
 
     /**
-     * Update the information of an existing author
+     * Update the information of an existing artist
      *
      * @return @Illuminate\Http\Response
      */
-    public function update(Request $request, $author)
+    public function update(Request $request, $artist)
     {
       $rules = [
         'name' => 'required|min:2|max:255',
@@ -76,29 +76,29 @@ class AuthorController extends Controller
 
       $this->validate($request, $rules);
 
-      $author = Author::findOrFail($author);
+      $artist = Artist::findOrFail($artist);
 
-      $author->fill($request->all());
+      $artist->fill($request->all());
 
-      if($author->isClean()){
+      if($artist->isClean()){
         return $this->errorResponse('At least one value must change', Response::HTTP_UNPROCESSABLE_ENTITY);
       }
 
-      $author->save();
+      $artist->save();
 
-      return $this->successResponse($author);
+      return $this->successResponse($artist);
     }
 
     /**
-     * Removes an existing author
+     * Removes an existing artist
      *
      * @return @Illuminate\Http\Response
      */
-    public function destroy($author)
+    public function destroy($artist)
     {
-      $author = Author::findOrFail($author);
-      $author->delete();
-      return $this->successResponse($author);
+      $artist = Artist::findOrFail($artist);
+      $artist->delete();
+      return $this->successResponse($artist);
     }
 
   }

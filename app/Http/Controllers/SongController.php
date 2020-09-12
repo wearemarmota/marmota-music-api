@@ -24,7 +24,7 @@ class SongController extends Controller
      */
     public function index(Request $request)
     {
-      $songs = Song::with('album', 'album.author')
+      $songs = Song::with('album', 'album.artist')
         ->orderBy('position')
         ->get();
 
@@ -32,7 +32,7 @@ class SongController extends Controller
     }
 
     /**
-     * Return songs list of an author
+     * Return songs list of an artist
      *
      * @return @Illuminate\Http\Response
      */
@@ -41,7 +41,7 @@ class SongController extends Controller
       Album::findOrFail($album);
 
       $songs = Song::where('album_id', $album)
-        ->with('album', 'album.author')
+        ->with('album', 'album.artist')
         ->orderBy('position')
         ->get();
 
@@ -58,7 +58,7 @@ class SongController extends Controller
     {
 
         $rules = [
-            'name' => 'required|min:2|max:255',
+            'title' => 'required|min:2|max:255',
             'album_id' => 'required|exists:albums,id',
             'song' => 'required|mimes:mp3|max:20000'
         ];
@@ -95,7 +95,7 @@ class SongController extends Controller
      */
     public function show($song)
     {
-      $song = Song::findOrFail($song)->with('album', 'album.author')->get();
+      $song = Song::findOrFail($song)->with('album', 'album.artist')->get();
 
       return $this->successResponse($song);
     }
@@ -108,7 +108,7 @@ class SongController extends Controller
     public function update(Request $request, $song)
     {
       $rules = [
-        'name' => 'required|min:1|max:255',
+        'title' => 'required|min:1|max:255',
       ];
 
       $this->validate($request, $rules);

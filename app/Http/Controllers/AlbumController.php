@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Album;
-use App\Author;
+use App\Artist;
 use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -21,39 +21,39 @@ class AlbumController extends Controller
      */
     public function index(Request $request)
     {
-        $name = $request->input('name');
+        $title = $request->input('title');
         $exact = $request->input('exact');
 
-        $albums = Album::when($name, function ($query, $name) use ($exact) {
+        $albums = Album::when($title, function ($query, $title) use ($exact) {
             $condition = $exact ? '=' : 'like';
-            $value = $exact ? $name : '%' . $name . '%';
-            return $query->where('name', $condition, $value);
+            $value = $exact ? $title : '%' . $title . '%';
+            return $query->where('title', $condition, $value);
         })
-        ->with('author')
+        ->with('artist')
         ->get();
 
         return $this->successResponse($albums);
     }
 
     /**
-     * Return albums list of an author
+     * Return albums list of an artist
      *
      * @return @Illuminate\Http\Response
      */
-    public function indexByAuthor(Request $request, $author)
+    public function indexByArtist(Request $request, $artist)
     {
-        Author::findOrFail($author);
+        Artist::findOrFail($artist);
 
-        $name = $request->input('name');
+        $title = $request->input('title');
         $exact = $request->input('exact');
 
-        $albums = Album::where('author_id', $author)
-        ->when($name, function ($query, $name) use ($exact) {
+        $albums = Album::where('artist_id', $artist)
+        ->when($title, function ($query, $title) use ($exact) {
             $condition = $exact ? '=' : 'like';
-            $value = $exact ? $name : '%' . $name . '%';
-            return $query->where('name', $condition, $value);
+            $value = $exact ? $title : '%' . $title . '%';
+            return $query->where('title', $condition, $value);
         })
-        ->with('author')
+        ->with('artist')
         ->get();
 
         return $this->successResponse($albums);
@@ -69,8 +69,8 @@ class AlbumController extends Controller
     {
 
       $rules = [
-        'name' => 'required|min:2|max:255',
-        'author_id' => 'required|exists:authors,id',
+        'title' => 'required|min:2|max:255',
+        'artist_id' => 'required|exists:artists,id',
       ];
 
       $this->validate($request, $rules);
@@ -100,7 +100,7 @@ class AlbumController extends Controller
     public function update(Request $request, $album)
     {
       $rules = [
-        'name' => 'required|min:2|max:255',
+        'title' => 'required|min:2|max:255',
       ];
 
       $this->validate($request, $rules);

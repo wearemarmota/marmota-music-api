@@ -15,12 +15,12 @@
 //     return $router->app->version();
 // });
 
-$router->get('/authors', 'AuthorController@index');
-$router->post('/authors', 'AuthorController@store');
-$router->get('/authors/{author}', 'AuthorController@show');
-$router->put('/authors/{author}', 'AuthorController@update');
-$router->patch('/authors/{author}', 'AuthorController@update');
-$router->delete('/authors/{author}', 'AuthorController@destroy');
+$router->get('/artists', 'ArtistController@index');
+$router->post('/artists', 'ArtistController@store');
+$router->get('/artists/{artist}', 'ArtistController@show');
+$router->put('/artists/{artist}', 'ArtistController@update');
+$router->patch('/artists/{artist}', 'ArtistController@update');
+$router->delete('/artists/{artist}', 'ArtistController@destroy');
 
 $router->get('/albums', 'AlbumController@index');
 $router->post('/albums', 'AlbumController@store');
@@ -28,7 +28,7 @@ $router->get('/albums/{album}', 'AlbumController@show');
 $router->put('/albums/{album}', 'AlbumController@update');
 $router->patch('/albums/{album}', 'AlbumController@update');
 $router->delete('/albums/{album}', 'AlbumController@destroy');
-$router->get('/authors/{author}/albums', 'AlbumController@indexByAuthor');
+$router->get('/artists/{artist}/albums', 'AlbumController@indexByArtist');
 
 $router->get('/songs', 'SongController@index');
 $router->post('/songs', 'SongController@store');
