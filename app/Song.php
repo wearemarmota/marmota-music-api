@@ -33,10 +33,22 @@ class Song extends Model
         'album_id',
     ];
 
+    protected $appends = ['fileUri'];
+
     // More info about this feature:
     // https://laravel.com/docs/5.0/eloquent#eager-loading
     public function Album()
     {
       return $this->belongsTo('App\Album','album_id');
+    }
+
+    // More info about this feature:
+    // https://stackoverflow.com/a/60879655/1378408
+    // https://laravel.com/docs/7.x/eloquent-serialization#appending-values-to-json
+    public function getFileUriAttribute()
+    {
+        $songsFolder = "/storage/app/public/songs/";
+        $fileName = $this->uuid . ".mp3";
+        return env('APP_URL') . $songsFolder . $fileName;
     }
 }
