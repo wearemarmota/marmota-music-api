@@ -68,16 +68,20 @@ class AlbumController extends Controller
     public function store(Request $request)
     {
 
-      $rules = [
-        'title' => 'required|min:2|max:255',
-        'artist_id' => 'required|exists:artists,id',
-      ];
+        $rules = [
+            'title' => 'required|min:2|max:255',
+            'artist_id' => 'required|exists:artists,id',
+        ];
 
-      $this->validate($request, $rules);
+        $this->validate($request, $rules);
 
-      $album = Album::create($request->all());
+        // ToDo: Check if the uuid already exists in DB.
 
-      return $this->successResponse($album, Response::HTTP_CREATED);
+        $extraData = ['uuid' => md5(uniqid(null, true))];
+
+        $album = Album::create(array_merge($request->all(), $extraData));
+
+        return $this->successResponse($album, Response::HTTP_CREATED);
     }
 
     /**

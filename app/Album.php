@@ -19,6 +19,7 @@ class Album extends Model
         'title',
         'year',
         'artist_id',
+        'uuid'
     ];
 
     protected $hidden = [
