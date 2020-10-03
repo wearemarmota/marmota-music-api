@@ -40,15 +40,19 @@ class ArtistController extends Controller
     public function store(Request $request)
     {
 
-      $rules = [
-        'name' => 'required|min:2|max:255',
-      ];
+        $rules = [
+            'name' => 'required|min:2|max:255',
+        ];
 
-      $this->validate($request, $rules);
+        $this->validate($request, $rules);
 
-      $artist = Artist::create($request->all());
+        // ToDo: Check if the uuid already exists in DB.
 
-      return $this->successResponse($artist, Response::HTTP_CREATED);
+        $extraData = ['uuid' => md5(uniqid(null, true))];
+
+        $artist = Artist::create(array_merge($request->all(), $extraData));
+
+        return $this->successResponse($artist, Response::HTTP_CREATED);
     }
 
     /**

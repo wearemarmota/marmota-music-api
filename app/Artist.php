@@ -17,5 +17,6 @@ class Artist extends Model
      */
     protected $fillable = [
         'name',
+        'uuid',
     ];
 }
