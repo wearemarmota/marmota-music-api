@@ -8,11 +8,14 @@ use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
+use Intervention\Image\ImageManagerStatic as Image;
 
 class AlbumController extends Controller
 {
 
     use ApiResponser;
+
+    const COVERS_FOLDER = '../storage/app/public/covers';
 
     /**
      * Return albums list
@@ -59,7 +62,6 @@ class AlbumController extends Controller
         return $this->successResponse($albums);
     }
 
-
     /**
      * Create an instance of album
      *
@@ -71,15 +73,27 @@ class AlbumController extends Controller
         $rules = [
             'title' => 'required|min:2|max:255',
             'artist_id' => 'required|exists:artists,id',
+            'cover' => 'mimes:jpeg,jpg,png|max:10240',
         ];
 
         $this->validate($request, $rules);
 
         // ToDo: Check if the uuid already exists in DB.
 
-        $extraData = ['uuid' => md5(uniqid(null, true))];
+        $uuid = md5(uniqid(null, true));
 
-        $album = Album::create(array_merge($request->all(), $extraData));
+        if($request->hasFile('cover')){
+            Image::make($request->file('cover')->path())
+                ->save(self::COVERS_FOLDER."/{$uuid}-original.jpg")
+                ->fit(500)
+                ->save(self::COVERS_FOLDER."/{$uuid}-500.jpg")
+                ->fit(100)
+                ->save(self::COVERS_FOLDER."/{$uuid}-100.jpg");
+        }
+
+        $album = Album::create(array_merge($request->all(), [
+            'uuid' => $uuid
+        ]));
 
         return $this->successResponse($album, Response::HTTP_CREATED);
     }
@@ -103,23 +117,35 @@ class AlbumController extends Controller
      */
     public function update(Request $request, $album)
     {
-      $rules = [
-        'title' => 'required|min:2|max:255',
-      ];
+        $rules = [
+            'title' => 'min:2|max:255',
+            'artist_id' => 'exists:artists,id',
+            'cover' => 'mimes:jpeg,jpg,png|max:10240',
+        ];
 
-      $this->validate($request, $rules);
+        // var_dump($request->all());
+        $this->validate($request, $rules);
 
-      $album = Album::findOrFail($album);
+        $album = Album::findOrFail($album);
 
-      $album->fill($request->all());
+        $album->fill($request->all());
 
-      if($album->isClean()){
-        return $this->errorResponse('At least one value must change', Response::HTTP_UNPROCESSABLE_ENTITY);
-      }
+        if($album->isClean() && !$request->hasFile('cover')){
+            return $this->errorResponse('At least one value must change', Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
 
-      $album->save();
+        if($request->hasFile('cover') && $request->file('cover')->isValid()){
+            Image::make($request->file('cover')->path())
+                ->save(self::COVERS_FOLDER."/{$album->uuid}-original.jpg")
+                ->fit(500)
+                ->save(self::COVERS_FOLDER."/{$album->uuid}-500.jpg")
+                ->fit(100)
+                ->save(self::COVERS_FOLDER."/{$album->uuid}-100.jpg");
+        }
 
-      return $this->successResponse($album);
+        $album->save();
+
+        return $this->successResponse($album);
     }
 
     /**
