@@ -26,7 +26,7 @@ class Album extends Model
       'artist_id',
     ];
 
-    protected $appends = ['coverFiles'];
+    protected $appends = ['covers'];
 
     // More info about this feature:
     // https://laravel.com/docs/5.0/eloquent#eager-loading
@@ -38,7 +38,7 @@ class Album extends Model
     // More info about this feature:
     // https://stackoverflow.com/a/60879655/1378408
     // https://laravel.com/docs/7.x/eloquent-serialization#appending-values-to-json
-    public function getCoverFilesAttribute()
+    public function getCoversAttribute()
     {
         $coversFolder = "/storage/app/public/covers/";
 
