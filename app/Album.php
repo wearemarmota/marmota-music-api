@@ -32,7 +32,14 @@ class Album extends Model
     // https://laravel.com/docs/5.0/eloquent#eager-loading
     public function Artist()
     {
-      return $this->belongsTo('App\Artist','artist_id');
+        return $this->belongsTo('App\Artist','artist_id');
+    }
+
+    // More info about this feature:
+    // https://laravel.com/docs/8.x/eloquent-relationships#one-to-many
+    public function Songs()
+    {
+        return $this->hasMany('App\Song', 'album_id', 'id');
     }
 
     // More info about this feature:

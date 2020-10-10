@@ -105,7 +105,7 @@ class AlbumController extends Controller
      */
     public function show($album)
     {
-      $album = Album::findOrFail($album);
+      $album = Album::with('artist')->with('songs')->findOrFail($album);
 
       return $this->successResponse($album);
     }
