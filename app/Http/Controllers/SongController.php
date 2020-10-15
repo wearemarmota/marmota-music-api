@@ -81,6 +81,11 @@ class SongController extends Controller
             'samplerate' => $mp3Data->sampleRate,
         ];
 
+        if (strpos($extraData['position'], '/') !== false) {
+            $positionParts = explode('/', $extraData['position']);
+            $extraData['position'] = $positionParts[0];
+        }
+
         $song = Song::create(array_merge($request->all(), $extraData));
 
         $request->file('song')->move(self::SONGS_FOLDER, $fileName);
