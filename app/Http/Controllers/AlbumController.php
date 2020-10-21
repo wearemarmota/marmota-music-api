@@ -24,8 +24,23 @@ class AlbumController extends Controller
      */
     public function index(Request $request)
     {
+
+        $rules = [
+            'offset'    => 'integer|filled|min:0',
+            'limit'     => 'integer|filled|min:1|max:999',
+            'sortBy'    => 'filled|in:id,title,artist_id,created_at,updated_at',
+            'orderBy'   => 'string|filled|in:asc,desc',
+        ];
+
+        $this->validate($request, $rules);
+
         $title = $request->input('title');
         $exact = $request->input('exact');
+
+        $offset = $request->input('offset', 0);
+        $limit = $request->input('limit', 10);
+        $sortBy = $request->input('sortBy', 'created_at');
+        $orderBy = $request->input('orderBy', 'desc');
 
         $albums = Album::when($title, function ($query, $title) use ($exact) {
             $condition = $exact ? '=' : 'like';
@@ -33,6 +48,9 @@ class AlbumController extends Controller
             return $query->where('title', $condition, $value);
         })
         ->with('artist')
+        ->offset($offset)
+        ->limit($limit)
+        ->orderBy($sortBy, $orderBy)
         ->get();
 
         return $this->successResponse($albums);
