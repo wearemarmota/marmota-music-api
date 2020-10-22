@@ -17,7 +17,7 @@ class RenamingAuthors extends Migration
         Schema::table('albums', function (Blueprint $table) {
             $table->renameColumn('name', 'title');
             $table->renameColumn('author_id', 'artist_id');
-            $table->renameIndex('albums_author_id_foreign', 'albums_artist_id_foreign');
+            $table->foreign('artist_id')->references('id')->on('artists');
         });
     }
 
@@ -32,7 +32,7 @@ class RenamingAuthors extends Migration
         Schema::table('albums', function (Blueprint $table) {
             $table->renameColumn('title', 'name');
             $table->renameColumn('artist_id', 'author_id');
-            $table->renameIndex('albums_artist_id_foreign', 'albums_author_id_foreign');
+            $table->foreign('author_id')->references('id')->on('authors');
         });
     }
 }
