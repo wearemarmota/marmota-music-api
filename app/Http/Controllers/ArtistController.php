@@ -19,14 +19,31 @@ class ArtistController extends Controller
      */
     public function index(Request $request)
     {
+        $rules = [
+            'offset'    => 'integer|filled|min:0',
+            'limit'     => 'integer|filled|min:1|max:999',
+            'sortBy'    => 'filled|in:id,name,created_at,updated_at',
+            'orderBy'   => 'string|filled|in:asc,desc',
+        ];
+
+        $this->validate($request, $rules);
+
         $name = $request->input('name');
         $exact = $request->input('exact');
+
+        $offset = $request->input('offset', 0);
+        $limit = $request->input('limit', 10);
+        $sortBy = $request->input('sortBy', 'created_at');
+        $orderBy = $request->input('orderBy', 'desc');
 
         $artists = Artist::when($name, function ($query, $name) use ($exact) {
             $condition = $exact ? '=' : 'like';
             $value = $exact ? $name : '%' . $name . '%';
             return $query->where('name', $condition, $value);
         })
+        ->offset($offset)
+        ->limit($limit)
+        ->orderBy($sortBy, $orderBy)
         ->get();
 
         return $this->successResponse($artists);
