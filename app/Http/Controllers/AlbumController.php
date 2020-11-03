@@ -41,6 +41,7 @@ class AlbumController extends Controller
         $limit = $request->input('limit', 10);
         $sortBy = $request->input('sortBy', 'created_at');
         $orderBy = $request->input('orderBy', 'desc');
+        $shuffle = $request->input('shuffle');
 
         $albums = Album::when($title, function ($query, $title) use ($exact) {
             $condition = $exact ? '=' : 'like';
@@ -49,11 +50,15 @@ class AlbumController extends Controller
         })
         ->with('artist')
         ->offset($offset)
-        ->limit($limit)
-        ->orderBy($sortBy, $orderBy)
-        ->get();
+        ->limit($limit);
 
-        return $this->successResponse($albums);
+        if($shuffle){
+            $albums->inRandomOrder();
+        }else{
+            $albums->orderBy($sortBy, $orderBy);
+        }
+
+        return $this->successResponse($albums->get());
     }
 
     /**
