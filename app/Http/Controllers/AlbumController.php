@@ -110,8 +110,10 @@ class AlbumController extends Controller
                 ->save(self::COVERS_FOLDER."/{$uuid}-original.jpg")
                 ->fit(500)
                 ->save(self::COVERS_FOLDER."/{$uuid}-500.jpg")
+                ->save(self::COVERS_FOLDER."/{$uuid}-500.webp")
                 ->fit(100)
-                ->save(self::COVERS_FOLDER."/{$uuid}-100.jpg");
+                ->save(self::COVERS_FOLDER."/{$uuid}-100.jpg")
+                ->save(self::COVERS_FOLDER."/{$uuid}-100.webp");
         }
 
         $album = Album::create(array_merge($request->all(), [
@@ -162,8 +164,10 @@ class AlbumController extends Controller
                 ->save(self::COVERS_FOLDER."/{$album->uuid}-original.jpg")
                 ->fit(500)
                 ->save(self::COVERS_FOLDER."/{$album->uuid}-500.jpg")
+                ->save(self::COVERS_FOLDER."/{$album->uuid}-500.webp")
                 ->fit(100)
-                ->save(self::COVERS_FOLDER."/{$album->uuid}-100.jpg");
+                ->save(self::COVERS_FOLDER."/{$album->uuid}-100.jpg")
+                ->save(self::COVERS_FOLDER."/{$album->uuid}-100.webp");
         }
 
         $album->save();
