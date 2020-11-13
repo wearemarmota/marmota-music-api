@@ -105,7 +105,7 @@ class AlbumController extends Controller
 
         $uuid = md5(uniqid(null, true));
 
-        if($request->hasFile('cover')){
+        if($request->hasFile('cover') && $request->file('cover')->isValid()){
             Image::make($request->file('cover')->path())
                 ->save(self::COVERS_FOLDER."/{$uuid}-original.jpg")
                 ->fit(500)
