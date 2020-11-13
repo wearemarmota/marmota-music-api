@@ -55,8 +55,8 @@ class Album extends Model
 
         return [
             "original"  => env('APP_URL') . "{$coversFolder}{$this->uuid}-original.jpg",
-            "500"       => env('APP_URL') . "{$coversFolder}{$this->uuid}-500.jpg",
-            "100"       => env('APP_URL') . "{$coversFolder}{$this->uuid}-100.jpg",
+            "500"       => env('APP_URL') . "{$coversFolder}{$this->uuid}-500.webp",
+            "100"       => env('APP_URL') . "{$coversFolder}{$this->uuid}-100.webp",
         ];
     }
 
