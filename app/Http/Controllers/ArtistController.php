@@ -6,11 +6,14 @@ use App\Artist;
 use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Intervention\Image\ImageManagerStatic as Image;
 
 class ArtistController extends Controller
 {
 
     use ApiResponser;
+
+    const ARTISTS_IMAGES_FOLDER = '../storage/app/public/artists';
 
     /**
      * Return artists list
@@ -59,15 +62,29 @@ class ArtistController extends Controller
 
         $rules = [
             'name' => 'required|min:2|max:255',
+            'image' => 'mimes:jpeg,jpg,png|max:10240',
         ];
 
         $this->validate($request, $rules);
 
         // ToDo: Check if the uuid already exists in DB.
 
-        $extraData = ['uuid' => md5(uniqid(null, true))];
+        $uuid = md5(uniqid(null, true));
 
-        $artist = Artist::create(array_merge($request->all(), $extraData));
+        if($request->hasFile('image') && $request->file('image')->isValid()){
+            Image::make($request->file('image')->path())
+                ->save(self::ARTISTS_IMAGES_FOLDER."/{$uuid}-original.jpg")
+                ->fit(500)
+                ->save(self::ARTISTS_IMAGES_FOLDER."/{$uuid}-500.jpg")
+                ->save(self::ARTISTS_IMAGES_FOLDER."/{$uuid}-500.webp")
+                ->fit(100)
+                ->save(self::ARTISTS_IMAGES_FOLDER."/{$uuid}-100.jpg")
+                ->save(self::ARTISTS_IMAGES_FOLDER."/{$uuid}-100.webp");
+        }
+
+        $artist = Artist::create(array_merge($request->all(), [
+            'uuid' => $uuid,
+        ]));
 
         return $this->successResponse($artist, Response::HTTP_CREATED);
     }
@@ -91,23 +108,35 @@ class ArtistController extends Controller
      */
     public function update(Request $request, $artist)
     {
-      $rules = [
-        'name' => 'required|min:2|max:255',
-      ];
+        $rules = [
+            'name' => 'min:2|max:255',
+            'image' => 'mimes:jpeg,jpg,png|max:10240',
+        ];
 
-      $this->validate($request, $rules);
+        $this->validate($request, $rules);
 
-      $artist = Artist::findOrFail($artist);
+        $artist = Artist::findOrFail($artist);
 
-      $artist->fill($request->all());
+        $artist->fill($request->all());
 
-      if($artist->isClean()){
-        return $this->errorResponse('At least one value must change', Response::HTTP_UNPROCESSABLE_ENTITY);
-      }
+        if($artist->isClean() && !$request->hasFile('image')){
+            return $this->errorResponse('At least one value must change', Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
 
-      $artist->save();
+        if($request->hasFile('image') && $request->file('image')->isValid()){
+            Image::make($request->file('image')->path())
+                ->save(self::ARTISTS_IMAGES_FOLDER."/{$artist->uuid}-original.jpg")
+                ->fit(500)
+                ->save(self::ARTISTS_IMAGES_FOLDER."/{$artist->uuid}-500.jpg")
+                ->save(self::ARTISTS_IMAGES_FOLDER."/{$artist->uuid}-500.webp")
+                ->fit(100)
+                ->save(self::ARTISTS_IMAGES_FOLDER."/{$artist->uuid}-100.jpg")
+                ->save(self::ARTISTS_IMAGES_FOLDER."/{$artist->uuid}-100.webp");
+        }
 
-      return $this->successResponse($artist);
+        $artist->save();
+
+        return $this->successResponse($artist);
     }
 
     /**
