@@ -60,7 +60,7 @@ class SongController extends Controller
         $rules = [
             'title' => 'required|min:2|max:255',
             'album_id' => 'required|exists:albums,id',
-            'song' => 'required|mimes:mp3|max:20000'
+            'song' => 'required|mimes:mp3|max:30000'
         ];
 
         $this->validate($request, $rules);
