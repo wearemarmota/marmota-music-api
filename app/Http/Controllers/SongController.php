@@ -73,10 +73,16 @@ class SongController extends Controller
 
         // ToDo: Check if the uuid already exists in DB.
 
+        $position = 0;
+
+        if(isset($mp3Data->tags['track'])){
+            $position = $mp3Data->tags['track'];
+        }
+
         $extraData = [
             'uuid' => $uuid,
             'duration' => $mp3Data->duration,
-            'position' => $mp3Data->tags['track'] ?: 0,
+            'position' => $position,
             'bitrate' => $mp3Data->bitRate,
             'samplerate' => $mp3Data->sampleRate,
         ];
