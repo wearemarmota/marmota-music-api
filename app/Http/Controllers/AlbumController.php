@@ -37,6 +37,9 @@ class AlbumController extends Controller
         $title = $request->input('title');
         $exact = $request->input('exact');
 
+        $withArtist = $request->input('withArtist', 1);
+        $withSongs = $request->input('withSongs', 0);
+
         $offset = $request->input('offset', 0);
         $limit = $request->input('limit', 10);
         $sortBy = $request->input('sortBy', 'created_at');
@@ -47,10 +50,18 @@ class AlbumController extends Controller
             $condition = $exact ? '=' : 'like';
             $value = $exact ? $title : '%' . $title . '%';
             return $query->where('title', $condition, $value);
-        })
-        ->with('artist')
-        ->offset($offset)
-        ->limit($limit);
+        });
+
+        if($withArtist == 1){
+            $albums->with('artist');
+        }
+
+        if($withSongs == 1){
+            $albums->with('songs');
+        }
+
+        $albums->offset($offset);
+        $albums->limit($limit);
 
         if($shuffle){
             $albums->inRandomOrder();
@@ -73,16 +84,25 @@ class AlbumController extends Controller
         $title = $request->input('title');
         $exact = $request->input('exact');
 
+        $withArtist = $request->input('withArtist', 1);
+        $withSongs = $request->input('withSongs', 0);
+
         $albums = Album::where('artist_id', $artist)
         ->when($title, function ($query, $title) use ($exact) {
             $condition = $exact ? '=' : 'like';
             $value = $exact ? $title : '%' . $title . '%';
             return $query->where('title', $condition, $value);
-        })
-        ->with('artist')
-        ->get();
+        });
 
-        return $this->successResponse($albums);
+        if($withArtist == 1){
+            $albums->with('artist');
+        }
+
+        if($withSongs == 1){
+            $albums->with('songs');
+        }
+
+        return $this->successResponse($albums->get());
     }
 
     /**
