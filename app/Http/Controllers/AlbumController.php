@@ -188,6 +188,7 @@ class AlbumController extends Controller
                 ->fit(100)
                 ->save(self::COVERS_FOLDER."/{$album->uuid}-100.jpg")
                 ->save(self::COVERS_FOLDER."/{$album->uuid}-100.webp");
+            $album->touch();
         }
 
         $album->save();

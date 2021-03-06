@@ -39,7 +39,7 @@ class Album extends Model
     // https://laravel.com/docs/8.x/eloquent-relationships#one-to-many
     public function Songs()
     {
-        return $this->hasMany('App\Song', 'album_id', 'id');
+        return $this->hasMany('App\Song', 'album_id', 'id')->orderBy("position");
     }
 
     // More info about this feature:
@@ -53,10 +53,12 @@ class Album extends Model
             return [];
         }
 
+        $timestamp = strtotime($this->updated_at);
+
         return [
-            "original"  => env('APP_URL') . "{$coversFolder}{$this->uuid}-original.jpg",
-            "500"       => env('APP_URL') . "{$coversFolder}{$this->uuid}-500.webp",
-            "100"       => env('APP_URL') . "{$coversFolder}{$this->uuid}-100.webp",
+            "original"  => env('APP_URL') . "{$coversFolder}{$this->uuid}-original.jpg?u={$timestamp}",
+            "500"       => env('APP_URL') . "{$coversFolder}{$this->uuid}-500.webp?u={$timestamp}",
+            "100"       => env('APP_URL') . "{$coversFolder}{$this->uuid}-100.webp?u={$timestamp}",
         ];
     }
 
