@@ -37,3 +37,5 @@ $router->put('/songs/{song}', 'SongController@update');
 $router->patch('/songs/{song}', 'SongController@update');
 $router->delete('/songs/{song}', 'SongController@destroy');
 $router->get('/albums/{album}/songs', 'SongController@indexByAlbum');
+
+$router->get('/search', 'SearchController@index');
