@@ -33,7 +33,7 @@ class SearchController extends Controller
         $term = $request->input('term');
 
         $artists = Artist::where('name', 'like', '%' . $term . '%');
-        $albums = Album::where('title', 'like', '%' . $term . '%');
+        $albums = Album::where('title', 'like', '%' . $term . '%')->with("artist");
         $songs = Song::where('title', 'like', '%' . $term . '%');
 
         return $this->successResponse([
