@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 
 class Song extends Model
 {
@@ -33,13 +34,28 @@ class Song extends Model
         'album_id',
     ];
 
-    protected $appends = ['fileUri'];
+    protected $appends = ['fileUri', 'isFavorited'];
 
     // More info about this feature:
     // https://laravel.com/docs/5.0/eloquent#eager-loading
     public function Album()
     {
       return $this->belongsTo('App\Album','album_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function favoritedBy()
+    {
+        return $this->belongsToMany('App\User');
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getIsFavoritedAttribute(){
+        return $this->favoritedBy()->where('user_id', \Auth::user()->id)->exists();
     }
 
     // More info about this feature:

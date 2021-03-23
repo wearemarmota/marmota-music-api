@@ -46,6 +46,10 @@ $router->group(['middleware' => 'auth'], function () use($router) {
     $router->get('/users', 'UserController@allUsers');
     # Common routes:
     $router->get('/search', 'SearchController@index');
+    # Favorites routes:
+    $router->get('/favorites', 'FavoriteController@index');
+    $router->post('/favorites', 'FavoriteController@store');
+    $router->delete('/favorites/{favorite}', 'FavoriteController@destroy');
 });
 
 # Routes for non-authenticated users:
