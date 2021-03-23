@@ -53,14 +53,19 @@ class AuthController extends Controller
 
         $credentials = $request->only(['email', 'password']);
 
+        Auth::factory()->setTTL(60*24*7); // One week in minutes
+
         if (! $token = Auth::attempt($credentials)) {
             return $this->errorResponse('Unauthorized', Response::HTTP_UNAUTHORIZED);
         }
 
+        $profile = Auth::userOrFail();
+
         return $this->successResponse([
-            'token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => Auth::factory()->getTTL() * 60
+            'token'         => $token,
+            'token_type'    => 'bearer',
+            'expires_in'    => Auth::factory()->getTTL(),
+            'profile'       => $profile->only(['name', 'email', 'created_at', 'updated_at']),
         ]);
     }
 
