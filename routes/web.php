@@ -49,7 +49,7 @@ $router->group(['middleware' => 'auth'], function () use($router) {
     # Favorites routes:
     $router->get('/favorites', 'FavoriteController@index');
     $router->post('/favorites', 'FavoriteController@store');
-    $router->delete('/favorites/{favorite}', 'FavoriteController@destroy');
+    $router->delete('/favorites/{song_id}', 'FavoriteController@destroy');
 });
 
 # Routes for non-authenticated users:

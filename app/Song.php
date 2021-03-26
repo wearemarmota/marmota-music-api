@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Favorite;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
@@ -46,16 +47,19 @@ class Song extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function favoritedBy()
+    public function favoriters()
     {
-        return $this->belongsToMany('App\User');
+        return $this->belongsToMany('App\User');//->withPivot('id');
     }
 
     /**
      * @return boolean
      */
     public function getIsFavoritedAttribute(){
-        return $this->favoritedBy()->where('user_id', \Auth::user()->id)->exists();
+        return Favorite::where([
+            "user_id" => \Auth::user()->id,
+            "song_id" => $this->id,
+        ])->exists();
     }
 
     // More info about this feature:

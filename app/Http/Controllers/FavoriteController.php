@@ -41,8 +41,8 @@ class FavoriteController extends Controller
         $user = Auth::userOrFail();
 
         $favorite = Favorite::firstOrCreate([
+            'song_id' => (int) $request->input('song_id'),
             'user_id' => $user->id,
-            'song_id' => $request->input('song_id'),
         ]);
 
         return $this->successResponse($favorite);
@@ -53,10 +53,15 @@ class FavoriteController extends Controller
      *
      * @return Response
      */
-    public function destroy($favorite)
+    public function destroy($song_id)
     {
-        $favorite = Favorite::findOrFail($favorite);
-        $favorite->delete();
+        $user = Auth::userOrFail();
+
+        $favorite = Favorite::where([
+            'song_id' => $song_id,
+            'user_id' => $user->id,
+        ])->delete();
+
         return $this->successResponse($favorite);
     }
 

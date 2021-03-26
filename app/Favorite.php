@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class Favorite extends Model
 {
 
+    protected $primaryKey = null;
+    public $incrementing = false;
+
     /**
      * The table associated with the model.
      *
