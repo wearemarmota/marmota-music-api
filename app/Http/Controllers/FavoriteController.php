@@ -19,8 +19,7 @@ class FavoriteController extends Controller
      */
     public function index()
     {
-        // $favorites = Auth::userOrFail()->favorites()->pluck('songs.id');
-        $favorites = Auth::userOrFail()->favorites()->get();
+        $favorites = Auth::userOrFail()->favorites()->with('album.artist')->get();
         return $this->successResponse($favorites);
     }
 
