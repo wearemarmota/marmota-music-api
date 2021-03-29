@@ -34,7 +34,7 @@ class SearchController extends Controller
 
         $artists = Artist::where('name', 'like', '%' . $term . '%');
         $albums = Album::where('title', 'like', '%' . $term . '%')->with("artist");
-        $songs = Song::where('title', 'like', '%' . $term . '%');
+        $songs = Song::where('title', 'like', '%' . $term . '%')->with("album.artist")->limit(5);
 
         return $this->successResponse([
             "artists"   => $artists->get(),
