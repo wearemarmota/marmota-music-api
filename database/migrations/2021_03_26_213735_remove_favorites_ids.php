@@ -25,6 +25,8 @@ class RemoveFavoritesIds extends Migration
      */
     public function down()
     {
-        $table->id();
+        Schema::table('song_user', function (Blueprint $table) {
+            $table->id();
+        });
     }
 }
