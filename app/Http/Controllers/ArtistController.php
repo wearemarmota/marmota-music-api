@@ -38,18 +38,24 @@ class ArtistController extends Controller
         $limit = $request->input('limit', 10);
         $sortBy = $request->input('sortBy', 'created_at');
         $orderBy = $request->input('orderBy', 'desc');
+        $shuffle = $request->input('shuffle');
 
         $artists = Artist::when($name, function ($query, $name) use ($exact) {
             $condition = $exact ? '=' : 'like';
             $value = $exact ? $name : '%' . $name . '%';
             return $query->where('name', $condition, $value);
-        })
-        ->offset($offset)
-        ->limit($limit)
-        ->orderBy($sortBy, $orderBy)
-        ->get();
+        });
 
-        return $this->successResponse($artists);
+        $artists->offset($offset);
+        $artists->limit($limit);
+
+        if($shuffle){
+            $artists->inRandomOrder();
+        }else{
+            $artists->orderBy($sortBy, $orderBy);
+        }
+
+        return $this->successResponse($artists->get());
     }
 
     /**
