@@ -1,0 +1,12 @@
+RewriteEngine on
+RewriteCond %{REQUEST_URI} !^/public/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ /public/$1
+RewriteRule ^(/)?$ public/index.php [L]
+
+<Files ".env">
+  require all denied
+  require host localhost
+  require ip 127.0.0.1
+</Files>
